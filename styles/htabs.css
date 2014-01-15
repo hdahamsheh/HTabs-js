@@ -1,0 +1,74 @@
+/*globalnav*/
+
+.htabs-ul {
+	/*position:relative;*/
+	float:left;
+	width:100%;
+	padding:0 0 1.75em 1em;
+	margin:0;
+	list-style:none;
+	line-height:1em;
+	/*min-height:55px;*/
+}
+
+.htabs-ul LI {
+	float:left;
+	display: inline;
+}
+
+.htabs-ul A {
+	display:block;
+}
+
+/*tabs Cont*/
+.htabs-cont{
+	padding-left:40px;
+}
+
+.tabs_container{
+	/*float:left;*/
+}
+
+.htabs-cont-fixed{
+	float:left;
+	width:100%;
+	overflow-y:auto;
+	overflow-x:hidden;
+}
+
+/*Tabs Default*/
+
+.htabs-default{
+	color: #000000;
+	background: #C5C5C5;
+	padding: 10px 20px;
+	margin:3px;
+}
+
+.htabs-default-hover{
+	background:#A09D9D;
+}
+
+.htabs-selected{
+	background: #353535 ;
+	color: #E0E0E0 ;
+}
+
+/****Demo CSS***/
+.htabs-defaultTest{
+	color: #F0F0F0;
+	background: #338A72;
+	padding: 10px 30px;
+	margin: 0 0.2em 0.2em 0;
+	text-decoration:none;
+	font-family:calibri;
+}
+
+.htabs-default-hoverTest{
+	background:#33705F;
+}
+
+.htabs-selectedTest{
+	background: #F0F0F0 ;
+	color: #655c89 ;
+}
