@@ -1,7 +1,7 @@
 HTabs-js
 ========
 
-JQuery plugin to render Tabs and navigation content divs by applying it to div.
+JQuery plugin to render Tabs and navigation content by applying it to div.
 
 ### Demo
 
