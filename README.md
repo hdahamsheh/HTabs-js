@@ -3,10 +3,6 @@ HTabs-js
 
 JQuery plugin to render Tabs and navigation content by applying it to div.
 
-### Demo
-
-a demo hosted in [http://hdahamsheh.github.io/HTabs-js](http://hdahamsheh.github.io/HTabs-js) of two tabs; one is default and another applying custom options.
-
 ### HTML
 
 at first we must add references to "htabs.js" and "htabs.css" as below.
@@ -75,4 +71,11 @@ $('#tabDiv').HTabs({
 
 the css is included in the plugin, and a default style is provided.
 you can always change the style by passing three main css classes like the optiones provided in the js example above.
+
+
+### Demo
+
+a demo hosted in [http://hdahamsheh.github.io/HTabs-js](http://hdahamsheh.github.io/HTabs-js) of two tabs; one is default and another applying custom options.
+
+
 
