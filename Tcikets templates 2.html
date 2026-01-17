@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Helpdesk Response Templates</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', 'Noto Sans Arabic', sans-serif;
+            background-color: #f8fafc;
+        }
+        .arabic-text {
+            font-family: 'Noto Sans Arabic', sans-serif;
+            direction: rtl;
+        }
+        .template-card {
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .template-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+        .placeholder-tag {
+            color: #2563eb;
+            font-weight: 600;
+            background: #dbeafe;
+            padding: 0 4px;
+            border-radius: 4px;
+        }
+        
+        /* Status Specific Styles */
+        .card-milestone { border-left: 6px solid #10b981; }
+        .card-unused { border-left: 6px solid #0ea5e9; }
+        
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+    </style>
+</head>
+<body class="p-4 md:p-8">
+
+    <div class="max-w-6xl mx-auto">
+        <!-- Header Section -->
+        <header class="mb-10 text-center">
+            <h1 class="text-3xl md:text-4xl font-bold text-slate-900 mb-2">Helpdesk Response Templates</h1>
+            <p class="text-slate-600">Quickly find and copy client-facing responses in English and Arabic.</p>
+            
+            <!-- Legend Section -->
+            <div class="mt-6 flex flex-wrap justify-center gap-4 text-sm font-medium">
+                <div class="flex items-center gap-2 px-3 py-1.5 bg-emerald-50 text-emerald-700 rounded-lg border border-emerald-200">
+                    <span class="w-3 h-3 bg-emerald-500 rounded-full"></span>
+                    Milestone (Client Notified)
+                </div>
+                <div class="flex items-center gap-2 px-3 py-1.5 bg-sky-50 text-sky-700 rounded-lg border border-sky-200">
+                    <span class="w-3 h-3 bg-sky-500 rounded-full"></span>
+                    Unused (Library Only / Silenced)
+                </div>
+            </div>
+
+            <div class="mt-8 relative max-w-2xl mx-auto">
+                <input type="text" id="searchInput" placeholder="Search templates by title or content..." 
+                    class="w-full px-5 py-3 pl-12 rounded-xl border border-slate-200 shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all">
+                <div class="absolute left-4 top-3.5 text-slate-400">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                    </svg>
+                </div>
+            </div>
+        </header>
+
+        <!-- Templates Grid -->
+        <div id="templateContainer" class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <!-- Templates will be injected here by JS -->
+        </div>
+
+        <!-- No Results -->
+        <div id="noResults" class="hidden text-center py-20">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 mx-auto text-slate-300 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="9.172 9.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <p class="text-xl text-slate-500">No templates found matching your search.</p>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="fixed bottom-5 right-5 bg-slate-900 text-white px-6 py-3 rounded-lg shadow-2xl transform translate-y-20 transition-transform duration-300 flex items-center gap-3">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+        </svg>
+        <span>Template copied to clipboard!</span>
+    </div>
+
+    <script>
+        const templates = [
+            {
+                id: 1,
+                status: "milestone",
+                title: "Ticket received and acknowledged",
+                en: "Dear [Client Name],\nThank you for contacting [Company Name]. We have received your ticket #[Ticket ID] regarding [Short Subject]. Our support team is reviewing it and will update you with the next steps shortly.",
+                ar: "عزيزي/عزيزتي [اسم العميل]،\nشكرًا لتواصلكم مع [اسم الشركة]. تم استلام التذكرة رقم #[رقم التذكرة] بخصوص [موضوع مختصر]. يقوم فريق الدعم بمراجعتها حاليًا وسنقوم بتحديثكم بالخطوات التالية قريبًا."
+            },
+            {
+                id: 2,
+                status: "unused",
+                title: "Ticket under initial review",
+                en: "Dear [Client Name],\nYour ticket #[Ticket ID] is currently under initial review. We are validating the details and will provide an update once the assessment is completed.",
+                ar: "عزيزي/عزيزتي [اسم العميل]،\nالتذكرة #[رقم التذكرة] قيد المراجعة الأولية حاليًا. نعمل على التحقق من التفاصيل وسنوافيكم بتحديث فور اكتمال التقييم."
+            },
+            {
+                id: 3,
+                status: "milestone",
+                title: "Waiting for additional information",
+                en: "Dear [Client Name],\nTo proceed with ticket #[Ticket ID], we kindly need additional information: [Requested Details]. Once received, we will continue the investigation and update you accordingly.",
+                ar: "عزيزي/عزيزتي [اسم العميل]،\nلاستكمال معالجة التذكرة #[رقم التذكرة]، نرجو تزويدنا بالمعلومات التالية: [المعلومات المطلوبة]. عند استلامها سنكمل التحقيق ونقوم بتحديثكم وفقًا لذلك."
+            },
+            {
+                id: 4,
+                status: "unused",
+                title: "Issue identified as configuration-related",
+                en: "Dear [Client Name],\nFollowing our review of ticket #[Ticket ID], the issue appears to be related to configuration settings. We will apply the necessary configuration adjustments and will confirm once completed.",
+                ar: "عزيزي/عزيزتي [اسم العميل]،\nبعد مراجعة التذكرة #[رقم التذكرة]، تبين أن المشكلة مرتبطة بإعدادات التهيئة. سنقوم بتنفيذ التعديلات اللازمة وسنؤكد لكم عند الانتهاء."
+            },
+            {
+                id: 5,
+                status: "unused",
+                title: "Issue identified as product bug",
+                en: "Dear [Client Name],\nWe have identified this as a product defect related to ticket #[Ticket ID]. Our technical team is analyzing the root cause and will share a plan for resolution (including target timelines) once confirmed.",
+                ar: "عزيزي/عزيزتي [اسم العميل]،\nتم تحديد المشكلة كتحدٍ/خلل في المنتج ضمن التذكرة #[رقم التذكرة]. يعمل فريقنا الفني على تحليل السبب الجذري وسنشارككم خطة المعالجة (بما في ذلك الإطار الزمني المتوقع) فور تأكيدها."
+            },
+            {
+                id: 6,
+                status: "milestone",
+                title: "Issue identified as invalid business usage",
+                en: "Dear [Client Name],\nBased on our assessment of ticket #[Ticket ID], the current behavior aligns with the system’s intended design. We have redirected this request to our Project Manager for further business review. Accordingly, we are closing this support ticket; the PM team will follow up with you regarding any further approach.",
+                ar: "عزيزي/عزيزتي [اسم العميل]،\nبناءً على تقييمنا للتذكرة #[رقم التذكرة]، فإن السلوك الحالي يتوافق مع تصميم النظام المعتمد. لقد قمنا بتحويل طلبكم إلى مدير المشروع لمراجعة متطلبات العمل. وبناءً عليه، سنقوم بإغلاق تذكرة الدعم هذه، وسيقوم فريق إدارة المشاريع بالمتابعة معكم بشأن أي إجراءات تالية."
+            },
+            {
+                id: 7,
+                status: "unused",
+                title: "Ticket under technical investigation",
+                en: "Dear [Client Name],\nTicket #[Ticket ID] is currently under technical investigation. We are reviewing logs and reproducing the issue in a controlled environment to ensure an accurate resolution. We will update you with progress.",
+                ar: "عزيزي/عزيزتي [اسم العميل]،\nالتذكرة #[رقم التذكرة] قيد التحقيق الفني حاليًا. نراجع السجلات ونعمل على إعادة إنتاج المشكلة في بيئة اختبار لضمان معالجة دقيقة. سنقوم بتحديثكم بالتقدم."
+            },
+            {
+                id: 8,
+                status: "unused",
+                title: "Ticket escalated to technical team",
+                en: "Dear [Client Name],\nWe have escalated ticket #[Ticket ID] to our technical team for further analysis. We will keep you informed as soon as we receive their findings and next steps.",
+                ar: "عزيزي/عزيزتي [اسم العميل]،\nتم تصعيد التذكرة #[رقم التذكرة] إلى الفريق الفني لمزيد من التحليل. سنبقيكم على اطلاع فور استلام المستجدات والخطوات التالية."
+            },
+            {
+                id: 9,
+                status: "milestone",
+                title: "Ticket in progress",
+                en: "Dear [Client Name],\nWork on ticket #[Ticket ID] is in progress. We have estimated that the resolution will be completed by [Estimated Date]. We are currently performing the necessary steps to ensure a full resolution and will share an update once this is completed.",
+                ar: "عزيزي/عزيزتي [اسم العميل]،\nجارٍ العمل على التذكرة #[رقم التذكرة]. نقدر أنه سيتم الانتهاء من المعالجة بحلول [التاريخ المتوقع]. نقوم حاليًا بتنفيذ الخطوات اللازمة لضمان معالجة كاملة وسنوافيكم بتحديث فور الانتهاء."
+            },
+            {
+                id: 10,
+                status: "unused",
+                title: "Ticket scheduled for fix",
+                en: "Dear [Client Name],\nTicket #[Ticket ID] has been scheduled for a fix in [Release/Version or Sprint]. We will confirm the deployment window once the release plan is finalized.",
+                ar: "عزيزي/عزيزتي [اسم العميل]،\nتم جدولة معالجة التذكرة #[رقم التذكرة] ضمن [الإصدار/النسخة أو السبرنت]. سنؤكد نافذة النشر فور اعتماد خطة الإصدار."
+            },
+            {
+                id: 11,
+                status: "unused",
+                title: "Ticket scheduled for configuration update",
+                en: "Dear [Client Name],\nTicket #[Ticket ID] will be addressed through a configuration update. We will coordinate the suitable time window and confirm once the changes are applied.",
+                ar: "عزيزي/عزيزتي [اسم العميل]،\nسيتم معالجة التذكرة #[رقم التذكرة] عبر تحديث/تعديل في إعدادات التهيئة. سننسق معكم الوقت المناسب وسنؤكد بعد تطبيق التغييرات."
+            },
+            {
+                id: 12,
+                status: "milestone",
+                title: "Ticket pending client confirmation",
+                en: "Dear [Client Name],\nWe have implemented the resolution for ticket #[Ticket ID]. Please verify from your side and confirm whether the issue is resolved. We will close the ticket upon your confirmation.",
+                ar: "عزيزي/عزيزتي [اسم العميل]،\nتم تطبيق المعالجة الخاصة بالتذكرة #[رقم التذكرة]. نرجو التحقق من جهتكم وتأكيد ما إذا تم حل المشكلة. سنقوم بإغلاق التذكرة بعد تأكيدكم."
+            },
+            {
+                id: 13,
+                status: "milestone",
+                title: "Ticket resolved",
+                en: "Dear [Client Name],\nTicket #[Ticket ID] has been resolved. The applied solution is: [Summary of Fix]. If you experience any further issues, please let us know.",
+                ar: "عزيزي/عزيزتي [اسم العميل]،\nتم حل التذكرة #[رقم التذكرة]. تفاصيل المعالجة: [ملخص الحل]. في حال واجهتم أي ملاحظات إضافية، نرجو إبلاغنا."
+            },
+            {
+                id: 14,
+                status: "milestone",
+                title: "Ticket closed",
+                en: "Dear [Client Name],\nAs the issue in ticket #[Ticket ID] has been resolved and confirmed, we are closing this ticket. Thank you for your cooperation.",
+                ar: "عزيزي/عزيزتي [اسم العميل]،\nنظرًا لحل المشكلة في التذكرة #[رقم التذكرة] وتأكيدها، سيتم إغلاق التذكرة. شكرًا لتعاونكم."
+            },
+            {
+                id: 15,
+                status: "milestone",
+                title: "Ticket reopened",
+                en: "Dear [Client Name],\nThank you for your feedback. We have reopened ticket #[Ticket ID] and our team is currently working on the resolution. We will share progress with you as we proceed.",
+                ar: "عزيزي/عزيزتي [اسم العميل]،\nشكرًا لملاحظاتكم. تم إعادة فتح التذكرة رقم #[رقم التذكرة] وجارٍ العمل على معالجتها من قبل فريقنا. سنوافيكم بالمستجدات فور توفرها."
+            },
+            {
+                id: 16,
+                status: "milestone",
+                title: "Ticket marked as change/enhancement",
+                en: "Dear [Client Name],\nBased on our assessment, your request in ticket #[Ticket ID] has been classified as an enhancement request. We have redirected these details to our Project Manager for roadmap evaluation. Accordingly, we are closing this support ticket; the PM team will follow up with you regarding any further roadmap updates.",
+                ar: "عزيزي/عزيزتي [اسم العميل]،\nبناءً على تقييمنا، تم تصنيف طلبكم في التذكرة #[رقم التذكرة] كطلب تحسين. لقد قمنا بتحويل هذه التفاصيل إلى مدير المشروع لتقييمها ضمن خطة العمل المستقبلي. وبناءً عليه، سنقوم بإغلاق تذكرة الدعم هذه؛ وسيقوم فريق إدارة المشاريع بالمتابعة معكم بشأن أي مستجدات متعلقة بخطة العمل."
+            }
+        ];
+
+        function highlightPlaceholders(text) {
+            return text.replace(/\[(.*?)\]/g, '<span class="placeholder-tag">[$1]</span>');
+        }
+
+        function renderTemplates(filter = "") {
+            const container = document.getElementById('templateContainer');
+            const noResults = document.getElementById('noResults');
+            container.innerHTML = "";
+            
+            const filtered = templates.filter(t => 
+                t.title.toLowerCase().includes(filter.toLowerCase()) || 
+                t.en.toLowerCase().includes(filter.toLowerCase()) ||
+                t.ar.includes(filter)
+            );
+
+            if (filtered.length === 0) {
+                noResults.classList.remove('hidden');
+            } else {
+                noResults.classList.add('hidden');
+                filtered.forEach(template => {
+                    const isMilestone = template.status === 'milestone';
+                    const cardClass = isMilestone ? 'card-milestone bg-emerald-50/30' : 'card-unused bg-sky-50/30';
+                    const badgeClass = isMilestone ? 'bg-emerald-100 text-emerald-700' : 'bg-sky-100 text-sky-700';
+                    const idBadgeClass = isMilestone ? 'bg-emerald-500 text-white' : 'bg-sky-500 text-white';
+
+                    const card = document.createElement('div');
+                    card.className = `template-card rounded-2xl p-6 border border-slate-200 shadow-sm flex flex-col gap-6 ${cardClass}`;
+                    card.innerHTML = `
+                        <div>
+                            <div class="flex items-center justify-between mb-4">
+                                <div class="flex items-center gap-2">
+                                    <span class="flex items-center justify-center w-8 h-8 rounded-full font-bold text-xs ${idBadgeClass}">${template.id}</span>
+                                    <h3 class="text-lg font-bold text-slate-800">${template.title}</h3>
+                                </div>
+                                <span class="text-[10px] uppercase tracking-wider px-2 py-1 rounded-md font-bold ${badgeClass}">
+                                    ${template.status}
+                                </span>
+                            </div>
+                            
+                            <div class="space-y-4">
+                                <!-- English Block -->
+                                <div class="group relative">
+                                    <div class="flex justify-between items-center mb-1">
+                                        <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">English</span>
+                                        <button onclick="copyToClipboard('${template.id}', 'en')" class="text-xs flex items-center gap-1 text-blue-600 hover:text-blue-800 font-medium transition-colors">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                                            </svg>
+                                            Copy
+                                        </button>
+                                    </div>
+                                    <div id="en-${template.id}" class="bg-white/80 p-4 rounded-xl text-slate-700 text-sm leading-relaxed border border-slate-100 whitespace-pre-wrap">${highlightPlaceholders(template.en)}</div>
+                                </div>
+
+                                <!-- Arabic Block -->
+                                <div class="group relative">
+                                    <div class="flex justify-between items-center mb-1">
+                                        <button onclick="copyToClipboard('${template.id}', 'ar')" class="text-xs flex items-center gap-1 text-blue-600 hover:text-blue-800 font-medium transition-colors">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                                            </svg>
+                                            نسخ
+                                        </button>
+                                        <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Arabic</span>
+                                    </div>
+                                    <div id="ar-${template.id}" class="arabic-text bg-white/80 p-4 rounded-xl text-slate-800 text-base leading-loose border border-slate-100 whitespace-pre-wrap">${highlightPlaceholders(template.ar)}</div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    container.appendChild(card);
+                });
+            }
+        }
+
+        function copyToClipboard(id, lang) {
+            const template = templates.find(t => t.id == id);
+            const text = lang === 'en' ? template.en : template.ar;
+            
+            // Create a temporary textarea for document.execCommand
+            const textArea = document.createElement("textarea");
+            textArea.value = text;
+            document.body.appendChild(textArea);
+            textArea.select();
+            
+            try {
+                document.execCommand('copy');
+                showToast(lang === 'ar' ? 'تم النسخ إلى الحافظة!' : 'Template copied to clipboard!');
+            } catch (err) {
+                console.error('Failed to copy', err);
+            }
+            
+            document.body.removeChild(textArea);
+        }
+
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            toast.querySelector('span').innerText = message;
+            toast.classList.remove('translate-y-20');
+            toast.classList.add('translate-y-0');
+            
+            setTimeout(() => {
+                toast.classList.remove('translate-y-0');
+                toast.classList.add('translate-y-20');
+            }, 3000);
+        }
+
+        document.getElementById('searchInput').addEventListener('input', (e) => {
+            renderTemplates(e.target.value);
+        });
+
+        // Initial Load
+        window.onload = () => {
+            renderTemplates();
+        };
+    </script>
+</body>
+</html>
